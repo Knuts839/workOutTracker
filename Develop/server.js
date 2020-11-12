@@ -4,6 +4,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require("mongoose")
 
+mongoose.connect(
+    process.env.MONGODB_URI || 'mongodb://localhost/workout', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: false
+    }
+);
 //Bring in models
 const db = require("./Models/Workouts");
 // Const Seed = require("./seed")
