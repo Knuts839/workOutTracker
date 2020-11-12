@@ -29,6 +29,93 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get("/exercise", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'exercise.html'));
+});
+
+app.get("/stats", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'stats.html'));
+});
+
+/******************************* MiddleWare  ****************************/
+
+
+
+
+
+//GET REQUESTS
+
+
+app.get("/api/workouts", (req, res) => {
+    db.find({}).sort({ day: -1 }).limit(1)
+        .then(dbWorkout => {
+            res.json(dbWorkout);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
+
+app.get("/api/workouts/range", (req, res) => {
+    db.find({})
+        .then(dbWorkout => {
+            res.json(dbWorkout);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+});
+
+
+
+//PUT REQUESTS
+
+app.put("/api/workouts/:id", (req, res) => {
+
+    let urlData = req.params;
+    let data = req.body;
+    db.updateOne({ _id: urlData.id }, {
+            $push: {
+                exercises: [{
+                    "type": data.type,
+                    "name": data.name,
+                    "duration": data.duration,
+                    "distance": data.distance,
+                    "weight": data.weight,
+                    "reps": data.reps,
+                    "sets": data.sets
+                }]
+            }
+        }).then(dbUpdate => {
+            res.json(dbUpdate);
+        })
+        .catch(err => {
+            res.json(err);
+        });
+
+});
+
+
+//POST REQUESTS
+
+app.post("/api/workouts", (req, res) => {
+
+    let data = req.body;
+    console.log(data)
+    db.create({
+            day: new Date().setDate(new Date().getDate())
+        }).then(dbUpdate => {
+            console.log("dbUpdate", dbUpdate)
+
+            res.json(dbUpdate);
+        })
+        .catch(err => {
+            console.log("error", err)
+            res.json(err);
+
+        });
+});
+
 
 
 /******************************* Connect to db  ****************************/
